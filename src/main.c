@@ -1,17 +1,75 @@
-/* Contador de palavras
- *
- * Este programa recebera uma serie de caracteres representando palavras em sua
- * entrada. Ao receber um caractere fim de linha ('\n'), deve imprimir na tela o
- * numero de palavras separadas que recebeu e, apos, encerrar.
+/*BRENDA BRAGA DE QUEIROZ
+ *RA: 164930
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h> //popen
 
+int volatile primo; 
+ 
+void primos(int x){
+    int i, d;
+    int numdiv = 0;
+    if(x==0 || x==1){
+        primo = 0; //0 significa que nao eh primo
+	return;
+    }
+    if(x==2 || x==3){
+        primo = 1;
+        return; 
+    }
+    
+    if((x%2) == 0){
+        primo = 0;
+        return;
+    }
+    else{
+        for(i = 1; i <= x; i++){
+          d = x % i; 
+          if( d == 0 ){
+              numdiv += 1; 
+              if(numdiv >2){
+              	primo = 0;
+              	return; 
+			  }
+          }
+        if(numdiv == 2){
+            primo = 1; //1 significa que o numero eh primo
+        }
+    }
+    }
+}
 int main() {
+    int x, j; //pega os numeros da entrada um a um
+    int vet[200000] , i=0 , flag =1;
+    FILE *resposta;
+    //para cada caractere lido, verificar se é primo ou não
+    while(flag){
+    	
+        scanf("%d", &x);//pega um elemento do vetor
+		if(x==-1){
+            flag = 0;
+        }        
+		else{
+            primos(x);
+			if(primo == 0){
+                vet[i] = x;//coloca no vetor vet todos os nao primos
+   				i++;
+            }
+    	}
+    }
 
-  int x, y;
+    if((resposta = popen("sort -n -r", "w")) == NULL){
+	perror("popen");
+	exit(1);
+    }
 
-  scanf("%d %d\n", &x, &y);
-  printf("%d\n", x + 200);
-  return 0;
+    for(j=0; j<i; j++){
+	fprintf(resposta, "%d\n", vet[j]);
+    }
+
+    pclose(resposta);
+    
+    return 0;
 }
